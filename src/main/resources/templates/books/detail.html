@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${book.title + ' | BookStep'}">書籍詳細 | BookStep</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container page-shell">
+    <div th:replace="~{fragments/messages :: messages}"></div>
+    <a class="back-link" th:href="@{/books}">← 書籍一覧へ</a>
+
+    <article class="detail-card">
+        <div class="detail-cover" aria-hidden="true">
+            <span>BOOK<br>STEP</span>
+        </div>
+        <div class="detail-content">
+            <div class="detail-topline">
+                <span class="status-badge" th:classappend="|status-${#strings.toLowerCase(book.status.name())}|"
+                      th:text="${book.status.displayName}">未読</span>
+                <span class="book-date" th:text="|登録日 ${#temporals.format(book.createdAt, 'yyyy年M月d日')}|">登録日</span>
+            </div>
+            <p class="eyebrow" th:text="${book.category ?: 'UNCATEGORIZED'}">CATEGORY</p>
+            <h1 th:text="${book.title}">書籍タイトル</h1>
+            <p class="detail-author" th:text="${book.author ?: '著者未設定'}">著者名</p>
+
+            <dl class="detail-list">
+                <div>
+                    <dt>総ページ数</dt>
+                    <dd th:text="${book.totalPages != null ? book.totalPages + 'ページ' : '未設定'}">未設定</dd>
+                </div>
+                <div>
+                    <dt>読み始めた日</dt>
+                    <dd th:text="${book.startedDate != null ? #temporals.format(book.startedDate, 'yyyy年M月d日') : '未設定'}">未設定</dd>
+                </div>
+                <div>
+                    <dt>読了日</dt>
+                    <dd th:text="${book.completedDate != null ? #temporals.format(book.completedDate, 'yyyy年M月d日') : '未設定'}">未設定</dd>
+                </div>
+                <div>
+                    <dt>累計読書時間</dt>
+                    <dd>0分 <small>次のフェーズで記録できます</small></dd>
+                </div>
+            </dl>
+
+            <section class="memo-block">
+                <h2>メモ</h2>
+                <p th:if="${book.memo != null}" th:text="${book.memo}">メモ</p>
+                <p class="muted" th:unless="${book.memo != null}">メモはまだありません。</p>
+            </section>
+
+            <div class="detail-actions">
+                <a class="button button-primary" th:href="@{/books/{id}/edit(id=${book.id})}">書籍情報を編集</a>
+                <form method="post" th:action="@{/books/{id}/delete(id=${book.id})}"
+                      onsubmit="return confirm('この書籍と関連する読書記録を削除します。よろしいですか？');">
+                    <button class="button button-danger" type="submit">削除</button>
+                </form>
+            </div>
+        </div>
+    </article>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="読書の記録と振り返りを支えるBookStep">
+    <title>ダッシュボード | BookStep</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container page-shell">
+    <div th:replace="~{fragments/messages :: messages}"></div>
+
+    <section class="hero">
+        <div>
+            <p class="eyebrow">YOUR READING JOURNEY</p>
+            <h1>今日の一ページを、<br>確かな積み重ねに。</h1>
+            <p class="hero-copy">読んだ本と時間を記録して、自分だけの読書の歩みを育てていきましょう。</p>
+            <div class="hero-actions">
+                <a class="button button-primary" th:href="@{/books/new}">最初の本を登録する</a>
+                <a class="button button-secondary" th:href="@{/books}">本棚を見る</a>
+            </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="book-shape book-shape-back"></div>
+            <div class="book-shape book-shape-front">
+                <span>BOOK<br>STEP</span>
+            </div>
+            <div class="step-dot step-dot-one"></div>
+            <div class="step-dot step-dot-two"></div>
+        </div>
+    </section>
+
+    <section aria-labelledby="summary-title">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">OVERVIEW</p>
+                <h2 id="summary-title">読書サマリー</h2>
+            </div>
+            <p>読書記録機能は次のフェーズで追加予定です。</p>
+        </div>
+        <div class="stats-grid">
+            <article class="stat-card stat-card-accent">
+                <span>登録書籍数</span>
+                <strong><span th:text="${bookCount}">0</span><small>冊</small></strong>
+            </article>
+            <article class="stat-card">
+                <span>読了書籍数</span>
+                <strong><span th:text="${completedBookCount}">0</span><small>冊</small></strong>
+            </article>
+            <article class="stat-card">
+                <span>累計読書時間</span>
+                <strong>0<small>分</small></strong>
+            </article>
+            <article class="stat-card">
+                <span>読書日数</span>
+                <strong>0<small>日</small></strong>
+            </article>
+        </div>
+    </section>
+
+    <section class="recent-section" aria-labelledby="recent-title">
+        <div class="section-heading section-heading-row">
+            <div>
+                <p class="eyebrow">RECENT BOOKS</p>
+                <h2 id="recent-title">最近登録した書籍</h2>
+            </div>
+            <a class="text-link" th:href="@{/books}">すべて見る →</a>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(recentBooks)}">
+            <div class="empty-icon" aria-hidden="true">＋</div>
+            <h3>本棚はまだ空です</h3>
+            <p>読みたい本や読んでいる本を登録して、BookStepを始めましょう。</p>
+            <a class="button button-primary" th:href="@{/books/new}">書籍を登録</a>
+        </div>
+
+        <div class="book-grid" th:unless="${#lists.isEmpty(recentBooks)}">
+            <a class="book-card" th:each="book : ${recentBooks}" th:href="@{/books/{id}(id=${book.id})}">
+                <div class="book-spine" aria-hidden="true"></div>
+                <div class="book-card-body">
+                    <span class="status-badge" th:classappend="|status-${#strings.toLowerCase(book.status.name())}|"
+                          th:text="${book.status.displayName}">未読</span>
+                    <h3 th:text="${book.title}">書籍タイトル</h3>
+                    <p th:text="${book.author ?: '著者未設定'}">著者名</p>
+                </div>
+            </a>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
