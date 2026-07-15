@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle + ' | BookStep'}">書籍を登録 | BookStep</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container page-shell form-page">
+    <div class="form-intro">
+        <a class="back-link" th:href="${bookId == null} ? @{/books} : @{/books/{id}(id=${bookId})}">← 戻る</a>
+        <p class="eyebrow">BOOK DETAILS</p>
+        <h1 th:text="${pageTitle}">書籍を登録</h1>
+        <p>タイトルと読書状態は必須です。ほかの項目はあとから編集できます。</p>
+    </div>
+
+    <form class="book-form" method="post" th:object="${bookForm}"
+          th:action="${bookId == null} ? @{/books} : @{/books/{id}(id=${bookId})}">
+        <div class="form-error-summary" role="alert" th:if="${#fields.hasAnyErrors()}">
+            <strong>入力内容を確認してください。</strong>
+            <p>赤く表示された項目を修正してください。</p>
+        </div>
+
+        <section class="form-section">
+            <div class="form-section-heading">
+                <span>01</span>
+                <div>
+                    <h2>基本情報</h2>
+                    <p>本を見分けるための情報を入力します。</p>
+                </div>
+            </div>
+
+            <div class="field-group field-full">
+                <label for="title">タイトル <span class="required">必須</span></label>
+                <input id="title" type="text" th:field="*{title}" maxlength="200"
+                       th:classappend="${#fields.hasErrors('title')} ? 'field-invalid'" placeholder="例：嫌われる勇気" autofocus>
+                <p class="field-error" th:errors="*{title}"></p>
+            </div>
+
+            <div class="field-grid">
+                <div class="field-group">
+                    <label for="author">著者名</label>
+                    <input id="author" type="text" th:field="*{author}" maxlength="100" placeholder="例：岸見一郎、古賀史健">
+                    <p class="field-error" th:errors="*{author}"></p>
+                </div>
+                <div class="field-group">
+                    <label for="category">カテゴリ</label>
+                    <input id="category" type="text" th:field="*{category}" maxlength="100" placeholder="例：自己啓発">
+                    <p class="field-error" th:errors="*{category}"></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-heading">
+                <span>02</span>
+                <div>
+                    <h2>読書の状態</h2>
+                    <p>現在の進み具合を記録します。</p>
+                </div>
+            </div>
+
+            <fieldset class="status-options">
+                <legend>読書状態 <span class="required">必須</span></legend>
+                <label class="status-option" th:each="status : ${statuses}">
+                    <input type="radio" th:field="*{status}" th:value="${status}">
+                    <span th:text="${status.displayName}">未読</span>
+                </label>
+            </fieldset>
+            <p class="field-error" th:errors="*{status}"></p>
+
+            <div class="field-grid">
+                <div class="field-group">
+                    <label for="totalPages">総ページ数</label>
+                    <input id="totalPages" type="number" th:field="*{totalPages}" min="1" inputmode="numeric" placeholder="例：300">
+                    <p class="field-error" th:errors="*{totalPages}"></p>
+                </div>
+                <div class="field-group">
+                    <label for="startedDate">読み始めた日</label>
+                    <input id="startedDate" type="date" th:field="*{startedDate}">
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="form-section-heading">
+                <span>03</span>
+                <div>
+                    <h2>メモ</h2>
+                    <p>この本を選んだ理由や、読みたいポイントを残せます。</p>
+                </div>
+            </div>
+            <div class="field-group field-full">
+                <label for="memo">メモ</label>
+                <textarea id="memo" th:field="*{memo}" maxlength="2000" rows="6"
+                          placeholder="例：友人にすすめられた。考え方のヒントを得たい。"></textarea>
+                <div class="field-help"><span id="memo-count">0</span> / 2,000文字</div>
+                <p class="field-error" th:errors="*{memo}"></p>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <a class="button button-secondary" th:href="${bookId == null} ? @{/books} : @{/books/{id}(id=${bookId})}">キャンセル</a>
+            <button class="button button-primary" type="submit" th:text="${bookId == null} ? '書籍を登録する' : '変更を保存する'">書籍を登録する</button>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

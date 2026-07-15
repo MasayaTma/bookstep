@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="messages">
+    <div class="flash flash-success" role="status" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="flash flash-error" role="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+</div>
+</body>
+</html>
