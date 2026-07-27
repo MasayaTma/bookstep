@@ -579,6 +579,7 @@ h2 {
 input[type="text"],
 input[type="number"],
 input[type="date"],
+select,
 textarea {
     width: 100%;
     padding: 13px 14px;
@@ -591,9 +592,58 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
     border-color: var(--green);
     box-shadow: 0 0 0 3px rgba(31, 107, 80, 0.12);
+}
+
+.record-section {
+    margin-top: 32px;
+}
+
+.section-title-row,
+.record-item-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.section-title-row h2,
+.record-item-heading h2 {
+    margin: 0;
+}
+
+.record-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.record-list-page {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.record-item {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.record-item p:last-of-type {
+    white-space: pre-wrap;
+}
+
+.text-button-danger {
+    padding: 0;
+    border: 0;
+    color: var(--danger);
+    background: transparent;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
 }
 
 textarea {
@@ -890,7 +940,8 @@ textarea {
     }
 
     .field-grid,
-    .detail-list {
+    .detail-list,
+    .record-list-page {
         grid-template-columns: 1fr;
     }
 

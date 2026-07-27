@@ -4,6 +4,7 @@ import com.example.bookstep.dto.BookForm;
 import com.example.bookstep.entity.Book;
 import com.example.bookstep.entity.BookStatus;
 import com.example.bookstep.service.BookService;
+import com.example.bookstep.service.ReadingRecordService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +21,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BookController {
 
     private final BookService bookService;
+    private final ReadingRecordService readingRecordService;
 
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, ReadingRecordService readingRecordService) {
         this.bookService = bookService;
+        this.readingRecordService = readingRecordService;
     }
 
     @ModelAttribute("statuses")
@@ -64,6 +67,8 @@ public class BookController {
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         model.addAttribute("book", bookService.findById(id));
+        model.addAttribute("readingRecords", readingRecordService.findByBookId(id));
+        model.addAttribute("totalReadingMinutes", readingRecordService.getTotalMinutesForBook(id));
         return "books/detail";
     }
 

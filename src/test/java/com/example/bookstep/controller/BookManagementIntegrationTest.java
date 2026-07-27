@@ -2,6 +2,7 @@ package com.example.bookstep.controller;
 
 import com.example.bookstep.entity.BookStatus;
 import com.example.bookstep.repository.BookRepository;
+import com.example.bookstep.repository.ReadingRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,12 @@ class BookManagementIntegrationTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ReadingRecordRepository readingRecordRepository;
+
     @BeforeEach
     void cleanDatabase() {
+        readingRecordRepository.deleteAll();
         bookRepository.deleteAll();
     }
 
@@ -105,5 +110,45 @@ class BookManagementIntegrationTest {
                 .andExpect(status().is3xxRedirection());
 
         assertThat(bookRepository.findById(bookId)).isEmpty();
+    }
+
+    @Test
+    void 読書記録の登録表示編集削除ができる() throws Exception {
+        mockMvc.perform(post("/books")
+                        .param("title", "達人プログラマー")
+                        .param("status", BookStatus.READING.name()))
+                .andExpect(status().is3xxRedirection());
+        Long bookId = bookRepository.findAll().getFirst().getId();
+
+        mockMvc.perform(post("/reading-records")
+                        .param("bookId", bookId.toString())
+                        .param("readingDate", "2026-07-27")
+                        .param("readingMinutes", "45")
+                        .param("startPage", "10")
+                        .param("endPage", "35")
+                        .param("reflection", "小さな改善を積み重ねる"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/books/*"));
+
+        var record = readingRecordRepository.findAll().getFirst();
+        mockMvc.perform(get("/books/{id}", bookId))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("45分")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("小さな改善")));
+
+        mockMvc.perform(post("/reading-records/{id}", record.getId())
+                        .param("bookId", bookId.toString())
+                        .param("readingDate", "2026-07-27")
+                        .param("readingMinutes", "60")
+                        .param("startPage", "10")
+                        .param("endPage", "50")
+                        .param("reflection", "更新した感想"))
+                .andExpect(status().is3xxRedirection());
+        assertThat(readingRecordRepository.findById(record.getId()))
+                .get().satisfies(updated -> assertThat(updated.getReadingMinutes()).isEqualTo(60));
+
+        mockMvc.perform(post("/reading-records/{id}/delete", record.getId()))
+                .andExpect(status().is3xxRedirection());
+        assertThat(readingRecordRepository.count()).isZero();
     }
 }

@@ -42,7 +42,7 @@
                 </div>
                 <div>
                     <dt>累計読書時間</dt>
-                    <dd>0分 <small>次のフェーズで記録できます</small></dd>
+                    <dd th:text="|${totalReadingMinutes}分|">0分</dd>
                 </div>
             </dl>
 
@@ -53,12 +53,41 @@
             </section>
 
             <div class="detail-actions">
+                <a class="button button-primary" th:href="@{/books/{id}/reading-records/new(id=${book.id})}">読書記録を追加</a>
                 <a class="button button-primary" th:href="@{/books/{id}/edit(id=${book.id})}">書籍情報を編集</a>
                 <form method="post" th:action="@{/books/{id}/delete(id=${book.id})}"
                       onsubmit="return confirm('この書籍と関連する読書記録を削除します。よろしいですか？');">
                     <button class="button button-danger" type="submit">削除</button>
                 </form>
             </div>
+
+            <section class="memo-block record-section">
+                <div class="section-title-row">
+                    <h2>読書記録</h2>
+                    <span th:text="|${#lists.size(readingRecords)}件|">0件</span>
+                </div>
+                <p class="muted" th:if="${#lists.isEmpty(readingRecords)}">読書記録はまだありません。</p>
+                <div class="record-list" th:unless="${#lists.isEmpty(readingRecords)}">
+                    <article class="record-item" th:each="record : ${readingRecords}">
+                        <div class="record-item-heading">
+                            <strong th:text="${#temporals.format(record.readingDate, 'yyyy年M月d日')}">読書日</strong>
+                            <span th:text="|${record.readingMinutes}分|">30分</span>
+                        </div>
+                        <p class="book-meta" th:if="${record.startPage != null or record.endPage != null}">
+                            <span th:text="${record.startPage != null ? record.startPage + 'ページから' : '開始ページ未設定'}">開始</span>
+                            <span th:text="${record.endPage != null ? record.endPage + 'ページまで' : '終了ページ未設定'}">終了</span>
+                        </p>
+                        <p th:if="${record.reflection != null}" th:text="${record.reflection}">感想</p>
+                        <div class="card-actions">
+                            <a class="text-link" th:href="@{/reading-records/{id}/edit(id=${record.id})}">編集</a>
+                            <form method="post" th:action="@{/reading-records/{id}/delete(id=${record.id})}"
+                                  onsubmit="return confirm('この読書記録を削除します。よろしいですか？');">
+                                <button class="text-button-danger" type="submit">削除</button>
+                            </form>
+                        </div>
+                    </article>
+                </div>
+            </section>
         </div>
     </article>
 </main>

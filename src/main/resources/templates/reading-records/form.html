@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${pageTitle + ' | BookStep'}">読書記録 | BookStep</title><link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="container page-shell form-page">
+    <div class="form-intro"><a class="back-link" th:href="@{/reading-records}">← 読書記録へ</a><p class="eyebrow">READING LOG</p><h1 th:text="${pageTitle}">読書記録を追加</h1><p>今日読んだ時間やページ、感じたことを残しましょう。</p></div>
+    <form class="book-form" method="post" th:object="${readingRecordForm}" th:action="${recordId == null} ? @{/reading-records} : @{/reading-records/{id}(id=${recordId})}">
+        <div class="form-error-summary" role="alert" th:if="${#fields.hasAnyErrors()}"><strong>入力内容を確認してください。</strong><p>赤く表示された項目を修正してください。</p></div>
+        <section class="form-section">
+            <div class="form-section-heading"><span>01</span><div><h2>読書内容</h2><p>本・日付・読書時間を入力します。</p></div></div>
+            <div class="field-group field-full"><label for="bookId">書籍 <span class="required">必須</span></label><select id="bookId" th:field="*{bookId}"><option value="">選択してください</option><option th:each="book : ${books}" th:value="${book.id}" th:text="${book.title}">書籍</option></select><p class="field-error" th:errors="*{bookId}"></p></div>
+            <div class="field-grid"><div class="field-group"><label for="readingDate">読書日 <span class="required">必須</span></label><input id="readingDate" type="date" th:field="*{readingDate}"><p class="field-error" th:errors="*{readingDate}"></p></div><div class="field-group"><label for="readingMinutes">読書時間（分） <span class="required">必須</span></label><input id="readingMinutes" type="number" min="1" max="1440" th:field="*{readingMinutes}" placeholder="例：30"><p class="field-error" th:errors="*{readingMinutes}"></p></div></div>
+            <div class="field-grid"><div class="field-group"><label for="startPage">開始ページ</label><input id="startPage" type="number" min="0" th:field="*{startPage}"></div><div class="field-group"><label for="endPage">終了ページ</label><input id="endPage" type="number" min="0" th:field="*{endPage}"></div></div><p class="field-error" th:errors="*{pageRangeValid}"></p>
+        </section>
+        <section class="form-section"><div class="form-section-heading"><span>02</span><div><h2>感想・気づき</h2><p>印象に残ったことを自由に書けます。</p></div></div><div class="field-group field-full"><label for="reflection">感想</label><textarea id="reflection" rows="8" maxlength="3000" th:field="*{reflection}" placeholder="今日読んで感じたこと、次に意識したいこと"></textarea><p class="field-error" th:errors="*{reflection}"></p></div></section>
+        <div class="form-actions"><a class="button button-secondary" th:href="@{/reading-records}">キャンセル</a><button class="button button-primary" type="submit">保存する</button></div>
+    </form>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body></html>

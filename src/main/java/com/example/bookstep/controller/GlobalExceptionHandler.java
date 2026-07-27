@@ -1,6 +1,7 @@
 package com.example.bookstep.controller;
 
 import com.example.bookstep.exception.BookNotFoundException;
+import com.example.bookstep.exception.ReadingRecordNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,16 @@ public class GlobalExceptionHandler {
             Model model) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         model.addAttribute("message", "対象の書籍が見つかりませんでした。");
+        return "error/404";
+    }
+
+    @ExceptionHandler(ReadingRecordNotFoundException.class)
+    public String handleReadingRecordNotFound(
+            ReadingRecordNotFoundException exception,
+            HttpServletResponse response,
+            Model model) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        model.addAttribute("message", "対象の読書記録が見つかりませんでした。");
         return "error/404";
     }
 }
