@@ -12,6 +12,7 @@
             <div class="record-item-heading"><div><p class="eyebrow" th:text="${#temporals.format(record.readingDate, 'yyyy.MM.dd')}">日付</p><h2><a th:href="@{/books/{id}(id=${record.book.id})}" th:text="${record.book.title}">書籍</a></h2></div><strong th:text="|${record.readingMinutes}分|">30分</strong></div>
             <p class="book-meta" th:if="${record.startPage != null or record.endPage != null}"><span th:text="${record.startPage != null ? record.startPage + 'ページから' : '開始未設定'}">開始</span><span th:text="${record.endPage != null ? record.endPage + 'ページまで' : '終了未設定'}">終了</span></p>
             <p th:if="${record.reflection != null}" th:text="${record.reflection}">感想</p>
+            <aside class="ai-comment" th:if="${record.aiComment != null}"><strong>AIからのコメント</strong><p th:text="${record.aiComment.comment}">AIコメント</p></aside>
             <div class="card-actions"><a class="button button-secondary button-small" th:href="@{/books/{id}(id=${record.book.id})}">書籍詳細</a><a class="text-link" th:href="@{/reading-records/{id}/edit(id=${record.id})}">編集</a></div>
         </article>
     </div>

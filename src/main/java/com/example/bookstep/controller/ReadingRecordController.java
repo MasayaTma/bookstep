@@ -4,6 +4,7 @@ import com.example.bookstep.dto.ReadingRecordForm;
 import com.example.bookstep.entity.ReadingRecord;
 import com.example.bookstep.service.BookService;
 import com.example.bookstep.service.ReadingRecordService;
+import com.example.bookstep.service.AiCommentService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +21,13 @@ public class ReadingRecordController {
 
     private final ReadingRecordService readingRecordService;
     private final BookService bookService;
+    private final AiCommentService aiCommentService;
 
-    public ReadingRecordController(ReadingRecordService readingRecordService, BookService bookService) {
+    public ReadingRecordController(ReadingRecordService readingRecordService, BookService bookService,
+                                   AiCommentService aiCommentService) {
         this.readingRecordService = readingRecordService;
         this.bookService = bookService;
+        this.aiCommentService = aiCommentService;
     }
 
     @GetMapping("/reading-records")
@@ -58,6 +62,10 @@ public class ReadingRecordController {
         }
         ReadingRecord saved = readingRecordService.create(readingRecordForm);
         redirectAttributes.addFlashAttribute("successMessage", "読書記録を保存しました。");
+        if (readingRecordForm.isGenerateAiComment()) {
+            AiCommentService.GenerationResult result = aiCommentService.generateAndSave(saved.getId());
+            if (result.message() != null) redirectAttributes.addFlashAttribute("errorMessage", result.message());
+        }
         return "redirect:/books/" + saved.getBook().getId();
     }
 

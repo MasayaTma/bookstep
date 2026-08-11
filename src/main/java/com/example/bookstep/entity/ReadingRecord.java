@@ -12,6 +12,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToOne;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,6 +41,9 @@ public class ReadingRecord {
 
     @Lob
     private String reflection;
+
+    @OneToOne(mappedBy = "readingRecord", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AiComment aiComment;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -71,6 +76,8 @@ public class ReadingRecord {
     public void setEndPage(Integer endPage) { this.endPage = endPage; }
     public String getReflection() { return reflection; }
     public void setReflection(String reflection) { this.reflection = reflection; }
+    public AiComment getAiComment() { return aiComment; }
+    public void setAiComment(AiComment aiComment) { this.aiComment = aiComment; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 }

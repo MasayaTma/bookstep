@@ -33,6 +33,8 @@ public class ReadingRecordForm {
     @Size(max = 3000, message = "感想は3,000文字以内で入力してください")
     private String reflection;
 
+    private boolean generateAiComment;
+
     @AssertTrue(message = "終了ページは開始ページ以上で入力してください")
     public boolean isPageRangeValid() {
         return startPage == null || endPage == null || endPage >= startPage;
@@ -61,4 +63,6 @@ public class ReadingRecordForm {
     public void setEndPage(Integer endPage) { this.endPage = endPage; }
     public String getReflection() { return reflection; }
     public void setReflection(String reflection) { this.reflection = reflection; }
+    public boolean isGenerateAiComment() { return generateAiComment; }
+    public void setGenerateAiComment(boolean generateAiComment) { this.generateAiComment = generateAiComment; }
 }
