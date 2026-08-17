@@ -39,25 +39,27 @@
                 <p class="eyebrow">OVERVIEW</p>
                 <h2 id="summary-title">読書サマリー</h2>
             </div>
-            <p>読書記録機能は次のフェーズで追加予定です。</p>
+            <p>記録したデータから自動集計しています。</p>
         </div>
         <div class="stats-grid">
             <article class="stat-card stat-card-accent">
                 <span>登録書籍数</span>
-                <strong><span th:text="${bookCount}">0</span><small>冊</small></strong>
+                <strong><span th:text="${summary.bookCount}">0</span><small>冊</small></strong>
             </article>
             <article class="stat-card">
                 <span>読了書籍数</span>
-                <strong><span th:text="${completedBookCount}">0</span><small>冊</small></strong>
+                <strong><span th:text="${summary.completedBookCount}">0</span><small>冊</small></strong>
             </article>
             <article class="stat-card">
                 <span>累計読書時間</span>
-                <strong>0<small>分</small></strong>
+                <strong><span th:text="${summary.totalMinutes}">0</span><small>分</small></strong>
             </article>
             <article class="stat-card">
                 <span>読書日数</span>
-                <strong>0<small>日</small></strong>
+                <strong><span th:text="${summary.readingDays}">0</span><small>日</small></strong>
             </article>
+            <article class="stat-card"><span>今月の読書時間</span><strong><span th:text="${summary.monthlyMinutes}">0</span><small>分</small></strong></article>
+            <article class="stat-card stat-card-accent"><span>現在のポイント</span><strong><span th:text="${summary.points}">0</span><small>pt</small></strong></article>
         </div>
     </section>
 
@@ -70,15 +72,15 @@
             <a class="text-link" th:href="@{/books}">すべて見る →</a>
         </div>
 
-        <div class="empty-state" th:if="${#lists.isEmpty(recentBooks)}">
+        <div class="empty-state" th:if="${#lists.isEmpty(summary.recentBooks)}">
             <div class="empty-icon" aria-hidden="true">＋</div>
             <h3>本棚はまだ空です</h3>
             <p>読みたい本や読んでいる本を登録して、BookStepを始めましょう。</p>
             <a class="button button-primary" th:href="@{/books/new}">書籍を登録</a>
         </div>
 
-        <div class="book-grid" th:unless="${#lists.isEmpty(recentBooks)}">
-            <a class="book-card" th:each="book : ${recentBooks}" th:href="@{/books/{id}(id=${book.id})}">
+        <div class="book-grid" th:unless="${#lists.isEmpty(summary.recentBooks)}">
+            <a class="book-card" th:each="book : ${summary.recentBooks}" th:href="@{/books/{id}(id=${book.id})}">
                 <div class="book-spine" aria-hidden="true"></div>
                 <div class="book-card-body">
                     <span class="status-badge" th:classappend="|status-${#strings.toLowerCase(book.status.name())}|"
@@ -88,6 +90,10 @@
                 </div>
             </a>
         </div>
+    </section>
+    <section class="recent-section" aria-labelledby="recent-record-title" th:unless="${#lists.isEmpty(summary.recentRecords)}">
+        <div class="section-heading section-heading-row"><div><p class="eyebrow">RECENT LOGS</p><h2 id="recent-record-title">最近の読書記録</h2></div><a class="text-link" th:href="@{/reading-records}">すべて見る →</a></div>
+        <div class="record-list"><article class="record-item" th:each="record : ${summary.recentRecords}"><div class="record-item-heading"><strong th:text="${record.book.title}">書籍</strong><span th:text="|${record.readingMinutes}分|">0分</span></div><p th:text="${#temporals.format(record.readingDate, 'yyyy年M月d日')}">日付</p><a class="text-link" th:href="@{/books/{id}(id=${record.book.id})}">詳細を見る</a></article></div>
     </section>
 </main>
 

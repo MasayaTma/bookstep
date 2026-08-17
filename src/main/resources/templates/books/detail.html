@@ -78,7 +78,9 @@
                             <span th:text="${record.endPage != null ? record.endPage + 'ページまで' : '終了ページ未設定'}">終了</span>
                         </p>
                         <p th:if="${record.reflection != null}" th:text="${record.reflection}">感想</p>
+                        <aside class="ai-comment" th:if="${record.aiComment != null}"><strong>AIからのコメント</strong><p th:text="${record.aiComment.comment}">AIコメント</p></aside>
                         <div class="card-actions">
+                            <form method="post" th:action="@{/reading-records/{id}/ai-comment(id=${record.id})}"><button class="text-link text-button" type="submit" th:text="${record.aiComment == null ? 'AIコメントを生成' : 'AIコメントを再生成'}">AIコメントを生成</button></form>
                             <a class="text-link" th:href="@{/reading-records/{id}/edit(id=${record.id})}">編集</a>
                             <form method="post" th:action="@{/reading-records/{id}/delete(id=${record.id})}"
                                   onsubmit="return confirm('この読書記録を削除します。よろしいですか？');">
